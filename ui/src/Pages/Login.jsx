@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { ethers } from "ethers";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import SustainableProductNFT from "../scdata/SustainableProductNFT.json"; // Adjust the path as needed
 
-const contractAddress = "0xba9e9091e3BA7690D564890Bb87f6FB2E8C9C0Cb"; // Your contract address
+const contractAddress = "0x0bAC2940cd53b93Bf79CC66a8c26814e6e3446cf"; // Your contract address
 
 const Login = () => {
   const [account, setAccount] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const loginWithMetaMask = async () => {
     if (window.ethereum) {
@@ -23,9 +25,12 @@ const Login = () => {
         const tx = await contractInstance.login();
         await tx.wait();
         alert("Logged in successfully!");
+
+        // Redirect to /products after successful login
+        navigate("/products");
+
       } catch (err) {
         console.error("Error logging in:", err);
-        setError("Failed to log in. Make sure you're connected to the right network.");
       }
     } else {
       alert("Please install MetaMask!");
@@ -37,7 +42,7 @@ const Login = () => {
       {/* Left side for login */}
       <div className="flex flex-col items-center justify-center w-1/2 h-full p-10">
         <h2 className="text-[50px] font-bold mb-4 text-center text-[#FFD700]">VERIFIED NFTs FOR AUTHENTIC, ECO-FRIENDLY PRODUCTS</h2>
-        <div className=" shadow-lg rounded-lg p-10 w-96">
+        <div className=" rounded-lg p-10 w-96">
           <h2 className="text-2xl font-semibold mb-6 text-center text-white">Login with MetaMask</h2>
           <button
             onClick={loginWithMetaMask}
@@ -49,16 +54,16 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Right side for image */}
+      {/* Right side for spinning image */}
       <div className="w-1/2 h-full flex items-center justify-center">
         <img
           src="https://www.arenasolutions.com/wp-content/uploads/what-are-sustainable-products.png"
           alt="Eco-friendly products"
-          className="h-[500px] max-w-full rounded-lg shadow-lg"
+          className="h-[500px] max-w-full rounded-lg  animate-spin-slow"
         />
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Login
