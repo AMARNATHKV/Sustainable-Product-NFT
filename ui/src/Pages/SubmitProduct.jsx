@@ -1,18 +1,116 @@
+// import React, { useState, useEffect } from 'react';
+// import { ethers } from 'ethers';
+// import { useNavigate } from 'react-router-dom';
+// import ProductForm from '../components/ProductForm';
+// import Header from '../components/Header';
+// import SustainableProductNFT from '../scdata/SustainableProductNFT.json';
+
+// const contractAddress = "0xba9e9091e3BA7690D564890Bb87f6FB2E8C9C0Cb"; // Your contract address
+
+// const SubmitProduct = () => {
+//   const [account, setAccount] = useState('');
+//   const [error, setError] = useState('');
+//   const navigate = useNavigate();
+
+//   const connectWallet = async () => {
+//     try {
+//       if (!window.ethereum) {
+//         alert("Please install MetaMask!");
+//         return;
+//       }
+
+//       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+//       setAccount(accounts[0]);
+//     } catch (err) {
+//       console.error("Error connecting to MetaMask:", err);
+//       setError("Failed to connect to MetaMask");
+//     }
+//   };
+
+//   const handleProductSubmit = async (data) => {
+//     const { 
+//       productId, 
+//       productName, 
+//       description, 
+//       ipfsMetadataHash, 
+//       sustainabilityClaims, 
+//       ipfsPhotoHash,      // New field
+//       manufacturingDate,  // New field
+//       expiryDate          // New field
+//     } = data;
+  
+//     try {
+//       if (!window.ethereum) {
+//         alert("Please install MetaMask!");
+//         return;
+//       }
+  
+//       const provider = new ethers.BrowserProvider(window.ethereum);
+//       const signer = await provider.getSigner();
+  
+//       const contract = new ethers.Contract(contractAddress, SustainableProductNFT.abi, signer);
+  
+//       const user = await contract.users(signer.getAddress());
+//       if (!user.isRegistered) {
+//         const txLogin = await contract.login();
+//         await txLogin.wait();
+//         alert("User logged in successfully!");
+//       }
+  
+//       // Updated contract method with new fields
+//       const tx = await contract.submitAndMintProduct(
+//         productId,
+//         productName,
+//         description,
+//         ipfsMetadataHash,
+//         sustainabilityClaims,
+//         ipfsPhotoHash,       // New field
+//         manufacturingDate,   // New field
+//         expiryDate,          // New field
+//         { value: ethers.parseEther("0.01") }
+//       );
+  
+//       await tx.wait();
+//       alert("Product submitted and NFT minted successfully!");
+//       navigate('/products');
+//     } catch (err) {
+//       console.error("Error submitting product:", err);
+//       setError("Error submitting product: " + err.message);
+//     }
+//   };
+  
+
+//   return (
+//     <>
+//     <Header />
+//     <div className="flex flex-col items-center min-h-screen bg-[#0c2239]">
+      
+//       <h2 className="text-4xl font-bold mt-8 mb-6 text-[#FFD700] text-center">Submit a New Product</h2>
+//       <div className="w-full max-w-2xl">
+//         <ProductForm onSubmit={handleProductSubmit} />
+//         {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+//       </div>
+//     </div>
+//     </>
+//   );
+// };
+
+// export default SubmitProduct;
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import ProductForm from '../components/ProductForm';
 import Header from '../components/Header';
-import SustainableProductNFT from '../scdata/SustainableProductNFT.json'; // Import the ABI
+import SustainableProductNFT from '../scdata/SustainableProductNFT.json';
 
-const contractAddress = "0x2bFDF4E55B96E4FC5bACF166b8b2ABeAE8784135"; // Your contract address
+const contractAddress = "0xba9e9091e3BA7690D564890Bb87f6FB2E8C9C0Cb"; // Your contract address
 
 const SubmitProduct = () => {
   const [account, setAccount] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
-  // Function to connect to MetaMask
+  // Connect wallet function
   const connectWallet = async () => {
     try {
       if (!window.ethereum) {
@@ -20,7 +118,6 @@ const SubmitProduct = () => {
         return;
       }
 
-      // Request access to the user's MetaMask account
       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
       setAccount(accounts[0]);
     } catch (err) {
@@ -29,8 +126,18 @@ const SubmitProduct = () => {
     }
   };
 
+  // Handle product submission
   const handleProductSubmit = async (data) => {
-    const { productId, productName, description, ipfsMetadataHash, sustainabilityClaims } = data;
+    const { 
+      productId, 
+      productName, 
+      description, 
+      ipfsMetadataHash, 
+      sustainabilityClaims, 
+      ipfsPhotoHash,      // New field for the product image hash
+      manufacturingDate,  // New field for the manufacturing date
+      expiryDate          // New field for the expiry date
+    } = data;
   
     try {
       if (!window.ethereum) {
@@ -38,54 +145,52 @@ const SubmitProduct = () => {
         return;
       }
   
-      // Connect to MetaMask and get the provider
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner(); // Get signer to send transactions
+      const signer = await provider.getSigner();
   
-      // Create contract instance with the signer
       const contract = new ethers.Contract(contractAddress, SustainableProductNFT.abi, signer);
   
-      // Check if the user is registered
+      // Ensure the user is registered in the contract
       const user = await contract.users(signer.getAddress());
       if (!user.isRegistered) {
-        // If not registered, call the login function
         const txLogin = await contract.login();
-        await txLogin.wait(); // Wait for the login transaction to complete
+        await txLogin.wait();
         alert("User logged in successfully!");
       }
   
-      // Call the submitAndMintProduct function and send the required ether
+      // Call the smart contract to submit and mint the product NFT
       const tx = await contract.submitAndMintProduct(
         productId,
         productName,
         description,
         ipfsMetadataHash,
         sustainabilityClaims,
-        { value: ethers.parseEther("0.01") } // Ensure correct ether value is passed
+        ipfsPhotoHash,       // Include product image hash
+        manufacturingDate,   // Include manufacturing date
+        expiryDate,          // Include expiry date
+        { value: ethers.parseEther("0.01") } // Payment for minting
       );
   
-      await tx.wait(); // Wait for the transaction to be mined
+      await tx.wait();
       alert("Product submitted and NFT minted successfully!");
-
-      // After successful submission, redirect to Product Listing page
-      navigate('/products'); // Redirect to the Product Listing page
+      navigate('/products');
     } catch (err) {
       console.error("Error submitting product:", err);
       setError("Error submitting product: " + err.message);
     }
   };
 
-  useEffect(() => {
-    connectWallet(); // Connect wallet when component loads
-  }, []);
-
   return (
-    <div>
+    <>
       <Header />
-      <h2 className="text-xl p-4">Submit a New Product</h2>
-      <ProductForm onSubmit={handleProductSubmit} />
-      {error && <p className="text-red-500">{error}</p>}
-    </div>
+      <div className="flex flex-col items-center min-h-screen bg-[#0c2239]">
+        <h2 className="text-4xl font-bold mt-8 mb-6 text-[#FFD700] text-center">Submit a New Product</h2>
+        <div className="w-full max-w-2xl">
+          <ProductForm onSubmit={handleProductSubmit} />
+          {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+        </div>
+      </div>
+    </>
   );
 };
 
