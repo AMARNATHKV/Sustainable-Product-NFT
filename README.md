@@ -1,4 +1,4 @@
-[7:54 pm, 24/9/2024] Nandana Blockchain: # 🌱 SUSTAINABLE PRODUCT NFTs - README
+# 🌱 SUSTAINABLE PRODUCT NFTs - README
 
 ## 📝 Overview
 
