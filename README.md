@@ -40,23 +40,23 @@ cd Sustainable-Products-NFTs_DApp
 
 ### Frontend Setup
 1.Navigate to the UI folder:
-bash
-cd ui
+  bash
+  cd ui
 
 2.Install dependencies:
-bash
-npm install
+  bash
+  npm install
 
 ### Hardhat Setup (Smart Contracts)
 1.Navigate to the hardhat folder:
 
-bash
-cd hardhat
+  bash
+  cd hardhat
 
 2.Install dependencies:
 
-bash
-npm install
+  bash
+  npm install
 
 ## ▶️  Running the Project
 1. Start the Hardhat Local Blockchain
